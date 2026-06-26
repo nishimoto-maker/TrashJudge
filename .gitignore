@@ -1,0 +1,11 @@
+venv311/
+__pycache__/
+.env
+*.pyc
+instance/
+*.db
+.DS_Store
+.vscode/
+text.txt
+apps/model/
+*.pt

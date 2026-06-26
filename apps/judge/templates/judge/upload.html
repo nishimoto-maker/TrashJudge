@@ -1,0 +1,27 @@
+{% extends "judge/base.html" %}
+{% block content %}
+<div>
+    <h4>画像新規登録</h4>
+    <p>アップロードする画像を選択してください</p>
+    <!-- フォーム入力後はjudge/views.pyのupload_image関数が呼び出される -->
+    <form action="{{ url_for('judge.upload_image') }}" method="post" enctype="multipart/form-data"
+        novalidate="novalidate">
+        <!-- CSRF対策 -->
+        {{ form.csrf_token }}
+        <div>
+            <label>
+                <!-- forms.pyの内容をもとに画像選択フォームを表示 -->
+                <span> {{ form.image(class="form-control-file") }} </span>
+            </label>
+        </div>
+        {% for error in form.image.errors %}
+        <span style="color: red;">{{ error }}</span>
+        {% endfor %}
+        <hr />
+        <div>
+            <!-- forms.pyの内容をもとにアップロードボタンを表示 -->
+            <label> {{ form.submit(class="btn btn-primary") }} </label>
+        </div>
+    </form>
+</div>
+{% endblock %}

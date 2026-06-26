@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ゴミ分別AI</title>
+</head>
+<body>
+
+    <h1>ゴミ分別AI</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" required>
+        <button type="submit">判定</button>
+    </form>
+
+    {% if result %}
+        <h2>判定結果</h2>
+
+        <p>{{ result.label }}</p>
+
+        <p>信頼度: {{ result.score }}%</p>
+    {% endif %}
+
+</body>
+</html>
