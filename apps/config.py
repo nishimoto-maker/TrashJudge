@@ -15,6 +15,8 @@ class BaseConfig:
 
     with open(labels_path, encoding="utf-8") as f:
         LABELS = [line.strip() for line in f.readlines()]
+    
+    SESSION_PERMANENT = False
 
 class LocalConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{basedir / 'local.sqlite'}"
