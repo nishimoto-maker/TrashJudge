@@ -11,6 +11,8 @@ class BaseConfig:
 
     labels_path = os.path.join(basedir, "apps",  "model", "labels.txt")
 
+    MODEL_PATH = os.path.join(basedir, "apps", "model", "keras_model.h5")
+
     with open(labels_path, encoding="utf-8") as f:
         LABELS = [line.strip() for line in f.readlines()]
 

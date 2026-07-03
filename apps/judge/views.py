@@ -7,9 +7,9 @@ import uuid
 from pathlib import Path
 from .forms import UploadImageForm, JudgeForm, DeleteForm
 import random
-import cv2
 from PIL import Image
-import numpy as np         
+import numpy as np
+import tensorflow as tf
 
 judge = Blueprint(
     "judge",
@@ -71,81 +71,35 @@ def upload_image():
         return redirect(url_for("judge.index"))
     return render_template("judge/upload.html", form=form)
 
-def make_color(labels):
-    colors = [[random.randint(0, 255) for _ in range(3)] for _ in labels]
-    color = random.choice(colors)
-    return color
-
-def make_line(result_image):
-    line = round(0.002 * max(result_image.shape[0:2])) + 1
-    return line
-
-
-def draw_lines(c1, c2, result_image, line, color):
-    cv2.rectangle(result_image, c1, c2, color, thickness=line)
-    return cv2
-
-
-def draw_texts(result_image, line, c1, cv2, color, labels, label):
-    display_txt = f"{labels[label]}"
-    font = max(line - 1, 1)
-    t_size = cv2.getTextSize(display_txt, 0, fontScale=line / 3, thickness=font)[0]
-    c2 = c1[0] + t_size[0], c1[1] - t_size[1] - 3
-    cv2.rectangle(result_image, c1, c2, color, -1)
-    cv2.putText(
-        result_image,
-        display_txt,
-        (c1[0], c1[1] - 2),
-        0,
-        line / 3,
-        [225, 255, 255],
-        thickness=font,
-        lineType=cv2.LINE_AA,
-    )
-    return cv2
 
 def exec_detect(target_image_path):
     labels = current_app.config["LABELS"]
-    image = Image.open(target_image_path)
-    image_tensor = torchvision.transforms.functional.to_tensor(image)
-    model = torch.load(Path(current_app.root_path, "judge", "model.pt"), weights_only=False)
-    model = model.eval()
-    output = model([image_tensor])[0]
-    tags = []
-    result_image = np.array(image.copy())
 
-    print(output)
+    image = Image.open(target_image_path).convert("RGB")
+    image = image.resize((224,224))
+    image_array = np.asarray(image)
+    image_array = image_array.astype(np.float32)
+    image_array = np.expand_dims(image_array, axis=0)
 
-    for box, label, score in zip(output["boxes"], output["labels"], output["scores"]):
-        if score > 0.5 and labels[label] not in tags:
-            print(score)
-            print(labels[label])
-            color = make_color(labels)
-            line = make_line(result_image)
-            c1 = (int(box[0]), int(box[1]))
-            c2 = (int(box[2]), int(box[3]))
-            cv2 = draw_lines(c1, c2, result_image, line, color)
-            cv2 = draw_texts(result_image, line, c1, cv2, color, labels, label)
-            tags.append(labels[label])
-
-    detected_image_file_name = str(uuid.uuid4()) + ".jpg"
-
-    detected_image_file_path = str(
-        Path(current_app.config["UPLOAD_FOLDER"], detected_image_file_name)
+    model = tf.keras.models.load_model(
+        current_app.config["MODEL_PATH"],
+        compile=False
     )
-    result_image_bgr = cv2.cvtColor(result_image, cv2.COLOR_RGB2BGR)
-    _, encoded = cv2.imencode(".jpg", result_image_bgr)
-    with open(detected_image_file_path, "wb") as f:
-        f.write(encoded.tobytes())
-    return tags, detected_image_file_name
+    
+    prediction = model.predict(image_array)
 
-def save_detected_image_tags(user_image, tags, detected_image_file_name):
-    user_image.image_path = detected_image_file_name
+    index = np.argmax(prediction)
+    tag = labels[index]
+
+    return tag
+
+def save_detected_image_tag(user_image, tag):
     user_image.is_detected = True
     db.session.add(user_image)
-    for tag in tags:
-        user_image_tag = UserImageTag(user_image_id=user_image.id, tag_name=tag)
-        db.session.add(user_image_tag)
+
+    user_image_tag = UserImageTag(user_image_id=user_image.id, tag_name=tag)
+    db.session.add(user_image_tag)
+
     db.session.commit()
 
 @judge.route("/judge/<string:image_id>", methods=["POST"])
@@ -157,10 +111,10 @@ def detect(image_id):
         return redirect(url_for("judge.index"))
 
     target_image_path = Path(current_app.config["UPLOAD_FOLDER"], user_image.image_path)
-    tags, detected_image_file_name = exec_detect(target_image_path)
+    tag = exec_detect(target_image_path)
 
     try:
-        save_detected_image_tags(user_image, tags, detected_image_file_name)
+        save_detected_image_tag(user_image, tag)
     except Exception as e:
         flash("物体検知処理でエラーが発生しました。")
         db.session.rollback()
@@ -226,7 +180,7 @@ def search():
         filtered_user_images.append(user_image)
 
     delete_form = DeleteForm()
-    judge_form = judgeForm()
+    judge_form = JudgeForm()
 
     return render_template(
         "judge/index.html",
