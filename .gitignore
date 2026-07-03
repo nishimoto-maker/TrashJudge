@@ -9,3 +9,4 @@ instance/
 text.txt
 apps/model/
 *.pt
+uploads/
