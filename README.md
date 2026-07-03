@@ -24,3 +24,7 @@ git関連のコマンド
   git push # Githubへ反映
   
   git pull # Githubから取得
+
+
+アプリの起動コマンド
+   python -m flask --app apps.app run
