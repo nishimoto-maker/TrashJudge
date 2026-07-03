@@ -1,3 +1,5 @@
+vscode と github の連携手順
+
 まずgitがインストールされているか、
 git --version　で確認
 
@@ -17,19 +19,24 @@ teachable machineが動かせる環境が揃う
 
 Ctrl + Shift + P　で　.venv　を選択する
 
+
 git関連のコマンド
-  git add  # ファイルを追加
+  git add . # 「.」大事　変更したファイルをすべて追加
   git status  # 変更を確認
   git commit -m "メッセージ" # コミット
-  git push # Githubへ反映
+  git push origin main # Githubへ反映
   
-  git pull # Githubから取得
+  git pull --rebase origin main # Githubから取得
 
 
 アプリの起動コマンド
    python -m flask --app apps.app run
+   
+7/3　西本
+teachable machineで作ったモデルでの検知ができるようになりました。
+モデルはgitにあげられないので、teamsかどっかに置いて、そこから各自で置く必要があります
+モデルの置き場所は、TrashJudge/apps/に、modelフォルダーを作って、.h5ファイルと、labels.txtを入れてください
 
-授業の物体検知アプリを改造して作ってます
-物体検知をteachable machineで作ったモデルに置き換えて、ゴミ分別アプリとします
-物体検知に必要なtorchはインストールしてないので、
-画像投稿したあとの「検知」ボタンはエラーになります
+仮想環境にインストールしたものの中で、互換性がなく動かせないものがあったので、バージョンを変えてインストールしなおしてます
+git pull --rebase origin main　で最新のものを持ってきた後、
+もう一度　pip install -r requirements.txtを実行してください
