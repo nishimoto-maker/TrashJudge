@@ -26,7 +26,7 @@ git関連のコマンド
   git commit -m "メッセージ" # コミット
   git push origin main # Githubへ反映
   
-  git pull --rebase origin main # Githubから取得
+  git pull origin main # Githubから取得
 
 アプリの起動コマンド
    python -m flask --app apps.app run
