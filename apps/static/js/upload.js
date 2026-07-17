@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // --- 1. 画像アップロード画面用の処理 ---
     const fileInput = document.querySelector('.form-control-file');
     if (fileInput) {
         const fileInputWrapper = fileInput.closest('label') || fileInput.closest('div');
@@ -22,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         fileInput.addEventListener('change', function(e) {
             const files = e.target.files;
-            if (files && files) {
+            if (files && files[0]) {
                 const oldPreview = document.getElementById('dt-preview-container');
                 if (oldPreview) oldPreview.remove();
 
@@ -36,23 +35,19 @@ document.addEventListener("DOMContentLoaded", function() {
                     previewContainer.appendChild(imgElement);
                     fileInput.closest('div').after(previewContainer);
                 };
-                reader.readAsDataURL(files);
+                reader.readAsDataURL(files[0]);
             }
         });
     }
 
-    // --- 2. 投稿一覧画面（画像新規登録ボタンの配置 ＆ カードの2列化） ---
     const imageContents = document.querySelectorAll('.dt-image-content');
     if (imageContents.length > 0) {
-        // 「画像新規登録」ボタン（aタグなど）を直接探す
         const uploadNavBtn = document.querySelector('a[href*="upload"]');
         if (uploadNavBtn) {
-            // ボタンがすでにdivに包まれていればそのdivに、なければ親要素にクラスを付与
             const btnParent = uploadNavBtn.parentElement;
             if (btnParent && btnParent !== document.body) {
                 btnParent.classList.add('dt-upload-nav-btn-wrap');
             } else {
-                // 親がbody等の場合は新しくdivを作って包む
                 const wrapper = document.createElement('div');
                 wrapper.classList.add('dt-upload-nav-btn-wrap');
                 uploadNavBtn.parentNode.insertBefore(wrapper, uploadNavBtn);
@@ -60,11 +55,9 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
 
-        // 新しく2列並び専用の「箱（div）」を作成
         const gridWrapper = document.createElement('div');
         gridWrapper.classList.add('dt-image-grid-container');
 
-        // 最初の投稿カードの直前に挿入して中身を引っ越し
         const firstCard = imageContents[0];
         firstCard.parentNode.insertBefore(gridWrapper, firstCard);
         imageContents.forEach(card => {
@@ -72,7 +65,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 「削除」ボタン・リンクを徹底的に見つけてクラスを付与
     const allLinksAndButtons = document.querySelectorAll('a, button, input[type="submit"], input[type="button"]');
     allLinksAndButtons.forEach(el => {
         const text = el.textContent.trim() || el.value || '';
