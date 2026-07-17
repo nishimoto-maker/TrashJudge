@@ -3,21 +3,18 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>judge</title>
+    <title>ゴミ分別判定アプリ</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
 
 <body>
-    <!-- ナビゲーションバーを作成する -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand " href="{{ url_for('judge.index') }}">judge</a>
-            <!-- 画像検索フォームを追加する -->
+            <a class="navbar-brand " href="{{ url_for('judge.index') }}">ゴミ分別判定アプリ</a>
             {% if url_for(request.endpoint) == url_for('judge.index') or
             url_for(request.endpoint) == url_for('judge.search') %}
             <div class="btn-group">
-                <!-- 検索語はjudge/views.pyのsearch関数を実行 -->
                 <form method="GET" action="{{ url_for('judge.search') }}" name="dtSearchForm">
                     {% if request.args.get("search") %}
                     <input type="search" id="dt-search" class="form-control col-md-12 dt-search" placeholder="検索"
@@ -35,7 +32,6 @@
                     <span class="nav-link">{{ current_user.username }}</span>
                 </li>
                 <li class="nav-item">
-                    <!-- auth/views.pyのlogout関数を実行 -->
                     <a href="{{ url_for('auth.logout') }}" class="nav-link">ログアウト</a>
                 </li>
                 <li class="nav-item">
@@ -43,11 +39,9 @@
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <!-- auth/views.pyのsignup関数を実行 -->
                     <a class="nav-link" href="{{ url_for('auth.signup') }}">新規登録</a>
                 </li>
                 <li class="nav-item">
-                    <!-- auth/views.pyのlogin関数を実行 -->
                     <a class="nav-link" href="{{ url_for('auth.login') }}">ログイン</a>
                 </li>
                 {% endif %}
@@ -55,7 +49,6 @@
         </div>
     </nav>
 
-    <!-- block contentをsection class="container"で囲む -->
     <section class="container">
         {% block content %}{% endblock %}
     </section>
