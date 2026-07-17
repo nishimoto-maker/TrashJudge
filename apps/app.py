@@ -35,4 +35,7 @@ def create_app(config_key="local"):
     from apps.judge import views as judge_views
     app.register_blueprint(judge_views.judge, url_prefix="/judge")
 
+    from apps.trashGame import views as game_views
+    app.register_blueprint(game_views.game, url_prefix="/game")
+
     return app
