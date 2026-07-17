@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大分別！！世紀のゴミゲー！！ - CYBER ECOLOGY FACTORY -</title>
+    <link rel="stylesheet" href="{{ url_for('game.static', filename='main.css') }}">
+</head>
+<body>
+
+    <div class="game-container">
+        <canvas id="game" width="550" height="600"></canvas>
+    </div>
+
+    <div class="system-log">
+        SYSTEM STATUS: ONLINE // SECTOR_04_CONVEYOR_BELT
+    </div>
+
+    <script>
+        const STATIC_URL = "{{ url_for('game.static', filename='') }}";
+    </script>
+    <script src="{{ url_for('game.static', filename='game.js') }}"></script>
+</body>
+</html>

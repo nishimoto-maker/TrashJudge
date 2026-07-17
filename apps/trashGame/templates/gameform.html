@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER ECOLOGY FACTORY - Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f0ff;
+            --neon-green: #00ff66;
+            --neon-pink: #ff0055;
+            --neon-yellow: #ffcc00;
+            --neon-orange: #ff5500;
+            --bg-dark: #0a0f1a;
+            --panel-bg: rgba(16, 24, 48, 0.85);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Noto Sans JP', 'Share Tech Mono', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* 背景のグリッド線 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -2;
+        }
+
+        /* スキャンラインエフェクト */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* メインコンテナ */
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--panel-bg);
+            border: 2px solid var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            padding: 40px;
+            border-radius: 4px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative; /* AUDIO案内の基準点用 */
+        }
+
+        /* タイトルエリア */
+        h1 {
+            font-family: 'Share Tech Mono', sans-serif;
+            font-size: 2.5rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-family: 'Share Tech Mono', sans-serif;
+            font-size: 1rem;
+            color: var(--neon-green);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        /* セクション見出し */
+        .section-title {
+            font-size: 1.1rem;
+            color: #8892b0;
+            text-align: left;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--neon-blue);
+            padding-left: 10px;
+            font-weight: bold;
+        }
+
+        .description {
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #ccd6f6;
+            margin-bottom: 30px;
+        }
+
+        /* 操作説明グリッド */
+        .guide-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .guide-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            padding: 15px;
+            border-radius: 4px;
+            text-align: left;
+            transition: all 0.3s ease; /* ホバー用アニメーション */
+        }
+
+        /* 🌟 操作説明カード：ホバー時に光る */
+        .guide-card:hover {
+            border-color: rgba(0, 240, 255, 0.4);
+            background: rgba(0, 240, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .guide-card h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .guide-card p {
+            font-size: 0.85rem;
+            color: #a8b2d1;
+            line-height: 1.4;
+        }
+
+        /* ゴミ種類一覧カタログ（3カラム構成） */
+        .trash-catalog {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .catalog-item {
+            background: rgba(10, 15, 26, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            padding: 20px 15px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;  /* 縦並び */
+            align-items: center;      /* 左右中央寄せ */
+            justify-content: center;  /* 上下中央寄せ */
+            gap: 12px;                /* 画像と文字の間の隙間 */
+            box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.05);
+            min-height: 140px;        /* 高さの統一 */
+            
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* スムーズなアニメーション */
+            cursor: default;
+        }
+
+        /* カタログアイテム：通常時の呼吸ステータス（ゆっくり明滅） */
+        .catalog-item {
+            animation: panelBreathe 3s infinite ease-in-out;
+        }
+
+        @keyframes panelBreathe {
+            0%, 100% {
+                border-color: rgba(0, 240, 255, 0.15);
+                box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                border-color: rgba(0, 240, 255, 0.3);
+                box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.1);
+            }
+        }
+
+        /* カタログアイテム：ホバー時の強烈ネオン＆ズーム */
+        .catalog-item:hover {
+            transform: scale(1.03) translateY(-3px);
+            background: rgba(10, 15, 26, 0.9);
+            z-index: 1; /* 手前に出す */
+            animation: none; /* 通常時の明滅を止める */
+        }
+
+        .catalog-thumb {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;      /* 比率維持 */
+            transition: transform 0.3s ease; /* ホバー用 */
+        }
+
+        /* 🌟 アイコン画像：ホバー時に少しズーム＆微振動 */
+        .catalog-item:hover .catalog-thumb {
+            transform: scale(1.1) rotate(2deg);
+            filter: drop-shadow(0 0 5px currentColor); /* 親の文字色を継承して光らせる */
+        }
+
+        .catalog-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            white-space: nowrap;      /* 改行防止 */
+            transition: text-shadow 0.3s ease;
+        }
+
+        /* 各アイテム用のホバーネオンカラー定義 */
+        
+        /* 燃えるゴミ (オレンジ) */
+        .border-burn { border-color: var(--neon-orange); color: var(--neon-orange); animation: none; /* 固有アニメ用意するならここ */ }
+        .border-burn:hover {
+            border-color: var(--neon-orange);
+            box-shadow: 0 0 15px rgba(255, 85, 0, 0.5), inset 0 0 10px rgba(255, 85, 0, 0.2);
+        }
+        .border-burn:hover .catalog-name { text-shadow: 0 0 8px var(--neon-orange); }
+
+        /* リサイクル (緑) */
+        .border-recycle { border-color: var(--neon-green); color: var(--neon-green); animation: none; }
+        .border-recycle:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.5), inset 0 0 10px rgba(0, 255, 102, 0.2);
+        }
+        .border-recycle:hover .catalog-name { text-shadow: 0 0 8px var(--neon-green); }
+
+        /* 缶ごみ (黄) */
+        .border-can { border-color: var(--neon-yellow); color: var(--neon-yellow); animation: none; }
+        .border-can:hover {
+            border-color: var(--neon-yellow);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5), inset 0 0 10px rgba(255, 204, 0, 0.2);
+        }
+        .border-can:hover .catalog-name { text-shadow: 0 0 8px var(--neon-yellow); }
+
+        /* プラスチック (青) */
+        .border-plastic { border-color: var(--neon-blue); color: var(--neon-blue); animation: none; }
+        .border-plastic:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.2);
+        }
+        .border-plastic:hover .catalog-name { text-shadow: 0 0 8px var(--neon-blue); }
+
+        /* 大型ゴミ (ピンク) */
+        .border-bag { border-color: var(--neon-pink); color: var(--neon-pink); animation: none; }
+        .border-bag:hover {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.5), inset 0 0 10px rgba(255, 0, 85, 0.2);
+        }
+        .border-bag:hover .catalog-name { text-shadow: 0 0 8px var(--neon-pink); }
+
+        /* 警告爆弾 (黄) */
+        .border-bomb { border-color: var(--neon-yellow); color: var(--neon-yellow); animation: none; }
+        .border-bomb:hover {
+            border-color: var(--neon-yellow);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5), inset 0 0 10px rgba(255, 204, 0, 0.2);
+        }
+        .border-bomb:hover .catalog-name { text-shadow: 0 0 8px var(--neon-yellow); }
+
+
+        /* テキスト用ネオンカラー */
+        .c-blue { color: var(--neon-blue); }
+        .c-green { color: var(--neon-green); }
+        .c-pink { color: var(--neon-pink); }
+        .c-yellow { color: var(--neon-yellow); }
+
+        /* システム起動ボタン */
+        .start-btn {
+            display: inline-block;
+            font-family: 'Share Tech Mono', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--bg-dark);
+            background-color: var(--neon-blue);
+            padding: 15px 40px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .start-btn:hover {
+            background-color: #ffffff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .start-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* フッター */
+        .footer {
+            margin-top: 40px;
+            font-family: 'Share Tech Mono', sans-serif;
+            font-size: 0.8rem;
+            color: #445566;
+        }
+
+        .bgm-notice {
+            /* positionをabsoluteに変更し、ゲーム画面の枠内を基準にします */
+            position: absolute;
+            
+            /* 青い外枠の内側、右上の角からほどよいディスタンスを確保 */
+            top: 15px;
+            right: 15px;
+
+            color: #00ff66;
+            font-family: 'Share Tech Mono', sans-serif;
+            font-size: 0.85rem; /* ほんの少しだけスマートに */
+            
+            text-align: right;   /* 2行の文字の右端を綺麗に揃える */
+            line-height: 1.4;    /* 行間を少し詰めてスタイリッシュに */
+
+            opacity: 0.8;        /* 視認性を上げるために少しだけ濃く */
+            animation: blink 1.5s infinite;
+            
+            z-index: 10;         /* 他の背景に隠れないように最前面へ */
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <audio id="homeBgm" src="/game/static/audio/home.mp3" loop></audio>
+        <source src="/game/static/audio/home.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <div id="bgmNotice" class="bgm-notice">
+            [AUDIO: ON] ➢ PRESS [B]
+        </div>
+        <h1>CYBER ECOLOGY FACTORY</h1>
+        <div class="subtitle">Environmental Management Terminal</div>
+
+        <div class="section-title">MISSION BRIEFING (概要)</div>
+        <p class="description">
+            ここはサイバーエコロジー工場の廃棄物仕分け部門。上空から次々と投下される産業廃棄物を、マウスドラッグで正しい処理ゲートへと導いてください。工場の環境汚染レベルが限界に達するとスコア減少ペナルティが発生します。制限時間内に最高効率の仕分けを目指してください。
+        </p>
+
+        <div class="section-title">OPERATIONAL GUIDE (操作ルール)</div>
+        <div class="guide-grid">
+            <div class="guide-card">
+                <h3 class="c-blue">■ 廃棄物のドラッグ</h3>
+                <p>画面内のゴミをマウスで掴んで、最下部にある同じアイコンのゲートまで運んで処理します。</p>
+            </div>
+            <div class="guide-card">
+                <h3 class="c-green">■ リサイクル資源</h3>
+                <p>リサイクルゴミを正しく処理すると、環境汚染レベルが大幅に回復し、ボーナススコアを獲得できます。</p>
+            </div>
+            <div class="guide-card">
+                <h3 class="c-pink">■ 大型ゴミ（要クリック）</h3>
+                <p>巨大なゴミは耐久度（HP）を持っています。ゲートに入れる前に三回クリックして解体させる必要があります。解体後は、スコアが大幅に増加します。</p>
+            </div>
+            <div class="guide-card">
+                <h3 class="c-yellow">■ 警告デバイス（爆弾）</h3>
+                <p>通常時は右側のHAZARDゾーンへ廃棄。フィーバー（OVERLOAD）中はクリックで起爆し、周囲のゴミを一掃できます。特殊な爆弾が出現することもあります。それらはより高いスコアを獲得できます。</p>
+            </div>
+        </div>
+
+        <div class="section-title">TARGET MANIFEST (廃棄物一覧)</div>
+        <div class="trash-catalog">
+            <div class="catalog-item border-burn">
+                <img src="{{ url_for('game.static', filename='img/燃えるゴミ.png') }}" class="catalog-thumb" alt="燃えるゴミ">
+                <div class="catalog-name">燃えるゴミ</div>
+            </div>
+            <div class="catalog-item border-recycle">
+                <img src="{{ url_for('game.static', filename='img/リサイクル.png') }}" class="catalog-thumb" alt="リサイクル">
+                <div class="catalog-name">リサイクル資源</div>
+            </div>
+            <div class="catalog-item border-can">
+                <img src="{{ url_for('game.static', filename='img/缶ごみ.png') }}" class="catalog-thumb" alt="缶ごみ">
+                <div class="catalog-name">缶ごみ</div>
+            </div>
+            <div class="catalog-item border-plastic">
+                <img src="{{ url_for('game.static', filename='img/プラスチックごみ.png') }}" class="catalog-thumb" alt="プラスチックごみ">
+                <div class="catalog-name">プラスチック</div>
+            </div>
+            <div class="catalog-item border-bag">
+                <img src="{{ url_for('game.static', filename='img/大きなゴミ.png') }}" class="catalog-thumb" alt="大きなゴミ">
+                <div class="catalog-name">大型ゴミ (HARD)</div>
+            </div>
+            <div class="catalog-item border-bomb">
+                <img src="{{ url_for('game.static', filename='img/爆弾.png') }}" class="catalog-thumb" alt="爆弾">
+                <div class="catalog-name">警告デバイス (HARD)</div>
+            </div>
+        </div>
+
+        <a href="{{ url_for('game.game_exe') }}" class="start-btn" id="startBtn">INITIALIZE SYSTEM</a>
+
+        <div class="footer">
+            SECURE CONNECTION // AUTHORIZED PERSONNEL ONLY
+        </div>   
+    </div>
+
+<script>
+    const homeBgm = document.getElementById("homeBgm");
+    const bgmNotice = document.getElementById("bgmNotice");
+
+    homeBgm.volume = 0.4;
+
+    let bgmEnabled = false;
+
+    document.addEventListener("keydown", (e) => {
+
+        if (e.key.toLowerCase() === "b") {
+
+            if (!bgmEnabled) {
+
+                homeBgm.play()
+                    .then(() => {
+                        bgmEnabled = true;
+
+                        bgmNotice.textContent = "[AUDIO: OFF] ➢ PRESS [B]";
+                        bgmNotice.style.color = "#00f0ff";
+                    })
+                    .catch(console.error);
+
+            } else {
+
+                homeBgm.pause();
+
+                bgmEnabled = false;
+
+                bgmNotice.textContent = "[AUDIO: ON] ➢ PRESS [B]";
+                bgmNotice.style.color = "#ff0055";
+            }
+        }
+
+    });
+
+    const startSe = new Audio("/game/static/audio/スタート音.mp3");
+    startSe.volume = 0.7;
+
+    const startBtn = document.getElementById("startBtn");
+    startBtn.addEventListener("click", (e) => {
+
+        e.preventDefault();
+
+        startBtn.textContent = "INITIALIZING...";
+        startBtn.style.pointerEvents = "none";
+
+        homeBgm.pause();
+
+        startSe.currentTime = 0;
+        startSe.play();
+
+        startSe.onended = () => {
+            window.location.href = "{{ url_for('game.game_exe') }}";
+        };
+    });
+</script>
+
+</body>
+</html>

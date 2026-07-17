@@ -1,0 +1,60 @@
+/* ===================================================
+   CYBER ECOLOGY FACTORY - STYLING
+   =================================================== */
+
+/* SF・サイバー風のフォントをインポート（近未来的なデジタル感を演出） */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0d1117; /* 深い宇宙・工場のようなダーク背景 */
+    color: #00f0ff; /* 基本ネオンブルー */
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* 工場のモニターをイメージしたゲームコンテナ */
+.game-container {
+    position: relative;
+    padding: 10px;
+    background: linear-gradient(135deg, #1f2937, #111827);
+    border: 3px solid #00f0ff;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3),
+                inset 0 0 15px rgba(0, 240, 255, 0.2);
+}
+
+/* メインのゲーム画面（Canvas） */
+canvas {
+    background-color: #151922; /* レーンが描画される背景 */
+    display: block;
+    image-rendering: pixelated; /* ドットやエフェクトをクッキリ見せる */
+    border: 1px solid #005577;
+}
+
+/* コンテナの四隅にサイバー感を出す装飾（擬似要素） */
+.game-container::before, .game-container::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #ff0055; /* アクセントのネオンピンク */
+    pointer-events: none;
+}
+.game-container::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+.game-container::after { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+
+/* 操作説明などのサブテキスト */
+.system-log {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #8892b0;
+    text-shadow: 0 0 5px rgba(136, 146, 176, 0.5);
+    letter-spacing: 1px;
+}
