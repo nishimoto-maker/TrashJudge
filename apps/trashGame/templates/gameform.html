@@ -72,6 +72,40 @@
             position: relative; /* AUDIO案内の基準点用 */
         }
 
+        .home-btn {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+
+            padding: 8px 18px;
+
+            color: var(--neon-blue);
+            border: 2px solid var(--neon-blue);
+            text-decoration: none;
+
+            font-family: 'Share Tech Mono', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+
+            background: rgba(0,240,255,0.05);
+            border-radius: 4px;
+
+            transition: all 0.25s ease;
+        }
+
+        .home-btn:hover {
+            background: var(--neon-blue);
+            color: var(--bg-dark);
+
+            box-shadow: 0 0 15px rgba(0,240,255,0.7);
+
+            transform: translateY(-2px);
+        }
+
+        .home-btn:active {
+            transform: translateY(0);
+        }
+
         /* タイトルエリア */
         h1 {
             font-family: 'Share Tech Mono', sans-serif;
@@ -347,6 +381,9 @@
     </audio>
 
     <div class="container">
+        <a href="{{ url_for('judge.index') }}" class="home-btn">
+            ⬅ BACK
+        </a>
         <div id="bgmNotice" class="bgm-notice">
             [AUDIO: ON] ➢ PRESS [B]
         </div>
